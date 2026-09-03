@@ -108,6 +108,22 @@ class NexusSPApp {
       this.actionBtn.addEventListener('click', () => this.triggerAppAction());
     }
 
+    // Dual Quick-Switch Buttons (Sub-bar arrows)
+    const btnPrevApp = document.getElementById('btnPrevApp');
+    const btnNextApp = document.getElementById('btnNextApp');
+    if (btnPrevApp) {
+      btnPrevApp.addEventListener('click', () => {
+        const nextIdx = (this.activeAppIndex - 1 + this.apps.length) % this.apps.length;
+        this.switchApp(nextIdx);
+      });
+    }
+    if (btnNextApp) {
+      btnNextApp.addEventListener('click', () => {
+        const nextIdx = (this.activeAppIndex + 1) % this.apps.length;
+        this.switchApp(nextIdx);
+      });
+    }
+
     // Direct SP Mode Screen Pointer Events (Directly on canvas)
     const canvas = this.screenCanvas;
     canvas.addEventListener('pointerdown', (e) => this.onDirectPointer(e, 'down'));

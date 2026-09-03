@@ -42,7 +42,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 52px;
-  background: rgba(8, 12, 22, 0.9);
+  background: rgba(8, 12, 22, 0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--glass-border);
@@ -132,7 +132,7 @@ html, body {
 }
 
 /* ==========================================================================
-   Contextual Sub-Bar
+   Contextual Sub-Bar with Dual Quick-Switch Arrows
    ========================================================================== */
 .cyber-sub-bar {
   position: fixed;
@@ -147,8 +147,38 @@ html, body {
   z-index: 90;
 }
 
+.app-switcher-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+  max-width: 65%;
+}
+
+.btn-arrow {
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--neon-cyan);
+  border: 1px solid var(--glass-border);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-arrow:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 10px var(--neon-cyan);
+}
+
 .app-badge-info {
-  background: rgba(8, 12, 22, 0.85);
+  background: rgba(8, 12, 22, 0.88);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
@@ -158,7 +188,6 @@ html, body {
   font-size: 11px;
   color: var(--neon-cyan);
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
-  pointer-events: auto;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -170,7 +199,7 @@ html, body {
 }
 
 .btn-action {
-  background: rgba(8, 12, 22, 0.85);
+  background: rgba(8, 12, 22, 0.88);
   color: #fff;
   border: 1px solid var(--neon-cyan);
   padding: 5px 14px;
@@ -224,27 +253,27 @@ html, body {
    ========================================================================== */
 .master-dock {
   position: fixed;
-  bottom: 16px;
+  bottom: max(20px, calc(10px + env(safe-area-inset-bottom)));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 14px;
-  background: rgba(8, 12, 22, 0.88);
+  gap: 8px;
+  padding: 5px 12px;
+  background: rgba(8, 12, 22, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 245, 255, 0.3);
+  border: 1.5px solid rgba(0, 245, 255, 0.45);
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 245, 255, 0.2);
-  z-index: 95;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 245, 255, 0.35);
+  z-index: 100;
 }
 
 .dock-btn {
-  width: 62px;
-  height: 48px;
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(0, 245, 255, 0.2);
+  width: 60px;
+  height: 46px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(0, 245, 255, 0.25);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -264,17 +293,17 @@ html, body {
 }
 
 .dock-btn:hover {
-  background: rgba(0, 245, 255, 0.15);
+  background: rgba(0, 245, 255, 0.2);
   border-color: var(--neon-cyan);
   color: #fff;
   transform: translateY(-2px);
 }
 
 .dock-btn.active {
-  background: linear-gradient(135deg, rgba(0, 245, 255, 0.3), rgba(168, 85, 247, 0.3));
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.35), rgba(168, 85, 247, 0.35));
   border-color: var(--neon-cyan);
   color: #fff;
-  box-shadow: 0 0 14px rgba(0, 245, 255, 0.5);
+  box-shadow: 0 0 16px rgba(0, 245, 255, 0.6);
   transform: translateY(-3px);
 }
 
@@ -287,6 +316,8 @@ body.sp-mode {
   width: 100vw;
   height: 100vh;
   height: 100dvh;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -321,14 +352,14 @@ body.sp-mode #directScreenWrapper {
   top: auto;
   left: auto;
   transform: none !important;
-  flex: 1;
-  min-height: 0;
+  flex: 1 1 0% !important;
+  height: 0 !important; /* Critical for WebKit to not push bottom dock */
+  min-height: 0 !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
-  padding: 8px 12px;
+  padding: 4px 8px;
   width: 100%;
-  height: auto;
   background: transparent;
   box-shadow: none;
   border: none;
@@ -342,8 +373,8 @@ body.sp-mode .phone-inner-frame {
   max-height: 100%;
   width: auto;
   aspect-ratio: 480 / 1040;
-  border-radius: 26px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 245, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 245, 255, 0.3);
   border: 2px solid rgba(0, 245, 255, 0.4);
   background: #000;
   position: relative;
@@ -355,7 +386,7 @@ body.sp-mode #phoneScreenCanvas {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: fill; /* Perfect 1:1 fit because frame aspect-ratio is 480/1040 */
+  object-fit: fill; /* Exact 480/1040 aspect ratio matched by parent */
   touch-action: none;
 }
 
@@ -372,7 +403,7 @@ body.sp-mode .scanlines {
   );
   background-size: 100% 4px;
   z-index: 25;
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
 body.sp-mode .master-dock {
@@ -381,7 +412,7 @@ body.sp-mode .master-dock {
   left: auto;
   transform: none !important;
   flex-shrink: 0;
-  margin: 6px auto 10px;
+  margin: 4px auto 6px;
   z-index: 50;
 }
 
@@ -391,59 +422,67 @@ body.sp-mode .master-dock {
 @media (max-width: 768px) {
   .cyber-top-nav {
     padding: 0 10px;
-    height: 48px;
+    height: 46px;
   }
   .brand-subtitle {
     display: none;
   }
   .brand-title {
-    font-size: 13px;
+    font-size: 12.5px;
   }
   .nav-controls {
-    gap: 6px;
+    gap: 5px;
   }
   .btn-cyber {
-    padding: 4px 8px;
-    font-size: 10.5px;
+    padding: 4px 7px;
+    font-size: 10px;
   }
   #btnRotate {
     display: none !important;
   }
 
   .cyber-sub-bar {
-    padding: 4px 10px;
+    padding: 4px 8px;
+  }
+  .app-switcher-header {
+    max-width: 60%;
+    gap: 4px;
+  }
+  .btn-arrow {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
   }
   .app-badge-info {
-    font-size: 10px;
-    padding: 4px 10px;
-    max-width: 58%;
+    font-size: 9.5px;
+    padding: 3px 8px;
   }
   .btn-action {
-    font-size: 10px;
-    padding: 4px 10px;
+    font-size: 9.5px;
+    padding: 4px 8px;
   }
 
   body.sp-mode #directScreenWrapper {
-    padding: 4px 6px;
+    padding: 2px 4px;
   }
   body.sp-mode .phone-inner-frame {
-    border-radius: 18px;
+    border-radius: 16px;
     border-width: 1.5px;
   }
 
   .master-dock {
-    bottom: 8px;
-    padding: 4px 8px;
-    gap: 6px;
-    border-radius: 16px;
+    bottom: max(16px, calc(8px + env(safe-area-inset-bottom)));
+    padding: 4px 6px;
+    gap: 5px;
+    border-radius: 14px;
   }
   .dock-btn {
-    width: 54px;
-    height: 42px;
-    font-size: 8px;
-    border-radius: 10px;
+    width: 50px;
+    height: 38px;
+    font-size: 7.5px;
+    border-radius: 8px;
   }
   .dock-btn .dock-icon {
-    font-size: 15px;
+    font-size: 13px;
   }
 }
