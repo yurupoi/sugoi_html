@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NEXUS Cyber-SP 2099 — 次世代ホログラフィック・スマホWebOS</title>
+  <meta name="description" content="3D空間に浮かぶチタン製近未来スマートフォン＆ホログラムAR照射。画面内では量子流体パウダー、カオスアトラクタ、Web Audioシンセサイザー、生体スキャンHUDがリアルタイムに動作。PCとスマートフォン双方に完全対応。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Cyberpunk Navigation Bar -->
+  <nav class="cyber-top-nav">
+    <div class="brand-group">
+      <span class="nexus-badge">NEXUS-SP</span>
+      <div class="brand-title">
+        CYBER-SP 2099
+        <span class="brand-subtitle">Holographic Spatial WebOS</span>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <button class="btn-cyber btn-mode-toggle" id="btnToggleMode" title="3Dホログラム空間とSP全画面操作を瞬時に切り替えます">
+        🌐 3Dホロ空間中 (SP切替)
+      </button>
+      <button class="btn-cyber" id="btnSound" title="Web Audioプロシージャル効果音のON/OFF">
+        🔇 音声 OFF
+      </button>
+      <button class="btn-cyber" id="btnBgm" title="サイバーパンク・シンセウェーブBGMの自動演奏">
+        🎵 BGM OFF
+      </button>
+      <button class="btn-cyber active" id="btnRotate" title="3Dデバイスの自動自転ON/OFF">
+        🔄 3D自転 ON
+      </button>
+    </div>
+  </nav>
+
+  <!-- Contextual Sub-Bar -->
+  <div class="cyber-sub-bar">
+    <div class="app-badge-info" id="activeAppTitle">
+      QUANTUM FLUID (量子重力パウダー)
+    </div>
+    <div class="sub-actions">
+      <button class="btn-action" id="appActionBtn">
+        🎨 テーマ切替 (Cyber Neon)
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport 1: 3D Spatial Hologram Studio -->
+  <div id="viewport3D"></div>
+
+  <!-- Viewport 2: Direct SP Screen Wrapper -->
+  <div id="directScreenWrapper">
+    <div class="phone-inner-frame">
+      <!-- High-Resolution Internal Render Screen -->
+      <canvas id="phoneScreenCanvas" width="480" height="1040"></canvas>
+      <!-- Scanlines FX -->
+      <div class="scanlines"></div>
+    </div>
+  </div>
+
+  <!-- Master Floating App Dock (Accessible in both 3D & SP Modes) -->
+  <div class="master-dock">
+    <button class="dock-btn active" data-app="0" title="量子流体・重力パウダー">
+      <span class="dock-icon">🌊</span>
+      <span class="dock-label">FLUID</span>
+    </button>
+    <button class="dock-btn" data-app="1" title="ニューラル・アトラクタ星雲">
+      <span class="dock-icon">🌀</span>
+      <span class="dock-label">CHAOS</span>
+    </button>
+    <button class="dock-btn" data-app="2" title="サイバーシンセ＆ビートドラム">
+      <span class="dock-icon">🎹</span>
+      <span class="dock-label">SYNTH</span>
+    </button>
+    <button class="dock-btn" data-app="3" title="生体＆システムテレメトリ">
+      <span class="dock-icon">🧬</span>
+      <span class="dock-label">BIO-HUD</span>
+    </button>
+  </div>
+
+  <!-- Local Standalone Libraries (Zero CDN Network Dependency) -->
+  <script src="lib/three.min.js"></script>
+  <script src="lib/OrbitControls.js"></script>
+
+  <!-- Application Modules -->
+  <script src="js/synth_audio.js"></script>
+  <script src="js/app_quantum_fluid.js"></script>
+  <script src="js/app_neural_attractor.js"></script>
+  <script src="js/app_cyber_synth.js"></script>
+  <script src="js/app_telemetry.js"></script>
+  <script src="js/device_3d.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

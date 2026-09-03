@@ -1,0 +1,9 @@
+# Local test scripts
+test_validation.js
+test_browser.js
+test_capture_all.js
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
