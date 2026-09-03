@@ -76,7 +76,6 @@ class NexusSPApp {
       btnBgm.textContent = playing ? '🎵 BGM 演奏中' : '🎵 BGM OFF';
       btnBgm.classList.toggle('active', playing);
       if (playing && this.audio.isMuted) {
-        // Auto-unmute if user clicks BGM
         this.audio.toggleMute();
         btnSound.textContent = '🔊 音声 ON';
         btnSound.classList.add('active');
@@ -85,13 +84,15 @@ class NexusSPApp {
 
     // 3D Auto-Rotate Toggle
     const btnRotate = document.getElementById('btnRotate');
-    btnRotate.addEventListener('click', () => {
-      if (this.device3D) {
-        this.device3D.autoRotate = !this.device3D.autoRotate;
-        btnRotate.textContent = this.device3D.autoRotate ? '🔄 3D自転 ON' : '⏸ 3D静止';
-        btnRotate.classList.toggle('active', this.device3D.autoRotate);
-      }
-    });
+    if (btnRotate) {
+      btnRotate.addEventListener('click', () => {
+        if (this.device3D) {
+          this.device3D.autoRotate = !this.device3D.autoRotate;
+          btnRotate.textContent = this.device3D.autoRotate ? '🔄 3D自転 ON' : '⏸ 3D静止';
+          btnRotate.classList.toggle('active', this.device3D.autoRotate);
+        }
+      });
+    }
 
     // App Dock Buttons
     const dockButtons = document.querySelectorAll('.dock-btn');
@@ -107,14 +108,26 @@ class NexusSPApp {
       this.actionBtn.addEventListener('click', () => this.triggerAppAction());
     }
 
-    // Direct SP Mode Screen Pointer Events (Touch & Mouse)
-    const spContainer = document.getElementById('directScreenWrapper');
-    spContainer.addEventListener('pointerdown', (e) => this.onDirectPointer(e, 'down'));
-    spContainer.addEventListener('pointermove', (e) => this.onDirectPointer(e, 'move'));
+    // Direct SP Mode Screen Pointer Events (Directly on canvas)
+    const canvas = this.screenCanvas;
+    canvas.addEventListener('pointerdown', (e) => this.onDirectPointer(e, 'down'));
+    canvas.addEventListener('pointermove', (e) => this.onDirectPointer(e, 'move'));
     window.addEventListener('pointerup', (e) => this.onDirectPointer(e, 'up'));
+    window.addEventListener('pointercancel', (e) => this.onDirectPointer(e, 'up'));
+
+    // Prevent mobile scrolling / bounce gesture while touching canvas
+    canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+    canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
     // Prevent context menu on right-click inside phone screen
-    this.screenCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    // Window resize handler to ensure 3D and 2D adjust smoothly
+    window.addEventListener('resize', () => {
+      if (this.viewMode === '3D' && this.device3D) {
+        this.device3D.onResize();
+      }
+    });
   }
 
   toggleViewMode() {
@@ -124,13 +137,15 @@ class NexusSPApp {
 
     if (this.viewMode === 'SP') {
       body.classList.add('sp-mode');
-      btn.innerHTML = '📱 SP全画面中 (3D切替)';
+      btn.innerHTML = '📱 2Dモード中 (3D切替)';
       btn.classList.add('active');
     } else {
       body.classList.remove('sp-mode');
-      btn.innerHTML = '🌐 3Dホロ空間中 (SP切替)';
+      btn.innerHTML = '🌐 3D空間中 (2D切替)';
       btn.classList.remove('active');
-      if (this.device3D) this.device3D.onResize();
+      if (this.device3D) {
+        setTimeout(() => this.device3D.onResize(), 50);
+      }
     }
 
     if (this.audio) this.audio.playWarp();
@@ -177,7 +192,7 @@ class NexusSPApp {
       this.actionBtn.textContent = `🌀 プリセット: ${name}`;
     } else if (this.activeAppIndex === 2) { // Cyber Synth
       const isPlaying = curApp.togglePlay();
-      this.actionBtn.textContent = isPlaying ? '⏸ シーケンサー停止' : '▶ シーケンサー再生';
+      this.actionBtn.textContent = isPlaying ? '⏸ 停止' : '▶ 再生';
       this.actionBtn.classList.toggle('active', isPlaying);
     } else if (this.activeAppIndex === 3) { // Telemetry
       curApp.startScan();
@@ -188,26 +203,28 @@ class NexusSPApp {
     if (!this.actionBtn) return;
     this.actionBtn.classList.remove('active');
     if (this.activeAppIndex === 0) {
-      this.actionBtn.textContent = `🎨 テーマ切替 (Cyber Neon)`;
+      this.actionBtn.textContent = `🎨 テーマ切替`;
     } else if (this.activeAppIndex === 1) {
-      this.actionBtn.textContent = `🌀 軌道ワープ (Cyber Butterfly)`;
+      this.actionBtn.textContent = `🌀 軌道ワープ`;
     } else if (this.activeAppIndex === 2) {
       const isPlaying = this.apps[2].isPlaying;
-      this.actionBtn.textContent = isPlaying ? '⏸ シーケンサー停止' : '▶ シーケンサー再生';
+      this.actionBtn.textContent = isPlaying ? '⏸ 停止' : '▶ 再生';
       this.actionBtn.classList.toggle('active', isPlaying);
     } else if (this.activeAppIndex === 3) {
-      this.actionBtn.textContent = `🧬 生体スキャン開始`;
+      this.actionBtn.textContent = `🧬 生体スキャン`;
     }
   }
 
   onDirectPointer(e, type) {
     if (this.viewMode !== 'SP') return;
     const rect = this.screenCanvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+
     const scaleX = this.screenCanvas.width / rect.width;
     const scaleY = this.screenCanvas.height / rect.height;
 
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
+    const x = Math.max(0, Math.min(this.screenCanvas.width, (e.clientX - rect.left) * scaleX));
+    const y = Math.max(0, Math.min(this.screenCanvas.height, (e.clientY - rect.top) * scaleY));
 
     this.handleAppInput(type, x, y, e.button === 2);
   }
